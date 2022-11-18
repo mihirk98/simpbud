@@ -101,11 +101,11 @@ class AppRepository {
     activeSheetValueNotifier.value = getSheet;
   }
 
-  updateCategoryBudget(Operation operation) {
-    // Update expenditure budget field value
-    operation.updateCategoryBudget();
-    // Update Categories List
-    operation.updateCategoriesList();
+  updateCategory(Operation operation) {
+    // Update category
+    operation.updateCategory();
+    // Update category transactions
+    operation.updateCategoryTransactions();
   }
 
   // Delete

@@ -79,10 +79,10 @@ class DataBloc {
               action.props,
             )
             .then((success) => success);
-      case enums.Action.updateCategoryBudget:
+      case enums.Action.updateCategory:
         return await _appRepository
             .operation(
-              _appRepository.updateCategoryBudget,
+              _appRepository.updateCategory,
               action.props,
             )
             .then((success) => success);

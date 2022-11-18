@@ -8,6 +8,7 @@ import 'package:simplebudget/ui/screens/add.dart';
 import 'package:simplebudget/ui/screens/calendar.dart';
 import 'package:simplebudget/ui/screens/categories.dart';
 import 'package:simplebudget/ui/screens/home.dart';
+import 'package:simplebudget/ui/screens/merge.dart';
 
 class NavigationBloc {
   // Singleton
@@ -35,6 +36,10 @@ class NavigationBloc {
         break;
       case enums.Navigation.categories:
         navigate = const CategoriesScreen();
+        break;
+      case enums.Navigation.merge:
+        navigate = const MergeScreen();
+        break;
     }
     if (navigation == enums.Navigation.home) {
       _pushAndRemoveUntilPageRoute(navigate, context);

@@ -27,3 +27,5 @@ const String monthNet = "Month Net";
 const String totalNet = "Total Net";
 const String remainingExpenditure = "Remaining\nExpenditure";
 const String currency = "₹";
+const String editCategory = "Edit Category";
+const String merge = "Merge";

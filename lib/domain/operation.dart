@@ -1,3 +1,4 @@
+import 'package:simplebudget/domain/models/transcation.dart';
 import 'package:simplebudget/services.dart';
 import 'package:simplebudget/domain/file_helper.dart';
 
@@ -81,8 +82,8 @@ class Operation {
                     : _props["transaction"].amount);
   }
 
-  // Update category budget field value of active sheet
-  updateCategoryBudget() {
+  // Update category
+  updateCategory() {
     int _categoryIndex = _updatedSheetsModel
         .sheets[_month - 1].expenditure.categories
         .indexWhere((category) => category.id == _props["category"]);
@@ -90,7 +91,30 @@ class Operation {
             .sheets[_month - 1].expenditure.categories[_categoryIndex] =
         _updatedSheetsModel
             .sheets[_month - 1].expenditure.categories[_categoryIndex]
-            .copyWith(budget: _props["budget"]);
+            .copyWith(id: _props["id"], budget: _props["budget"]);
+  }
+
+  // Update category transactions
+  updateCategoryTransactions() {
+    List<TransactionModel> _updatedTransations = [];
+    for (TransactionModel transaction
+        in _updatedSheetsModel.sheets[_month - 1].expenditure.transactions) {
+      if (transaction.desc == _props["category"]) {
+        _updatedTransations.add(
+          transaction.copyWith(
+            desc: _props["id"],
+          ),
+        );
+      } else {
+        _updatedTransations.add(transaction);
+      }
+      _updatedSheetsModel.sheets[_month - 1] =
+          _updatedSheetsModel.sheets[_month - 1].copyWith(
+        expenditure: _activeSheet.expenditure.copyWith(
+          transactions: _updatedTransations,
+        ),
+      );
+    }
   }
 
   // Update income total field value of active sheet (transaction amount is added to previous total, check IncomeModel)

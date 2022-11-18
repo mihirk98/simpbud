@@ -5,9 +5,9 @@ import 'package:simplebudget/blocs/data.dart';
 
 // Consts
 import 'package:simplebudget/consts/enums.dart' as enums;
-import 'package:simplebudget/ui/controllers/dialogs/confirmation_dialog.dart';
 
 // Controllers
+import 'package:simplebudget/ui/controllers/dialogs/confirmation_dialog.dart';
 import 'package:simplebudget/ui/controllers/dialogs/operation_dialog.dart';
 
 // Models
@@ -44,8 +44,8 @@ class PresentationBloc {
         break;
       case enums.Action.addExpenditureTransaction:
       case enums.Action.addIncomeTransaction:
-      case enums.Action.updateCategoryBudget:
       case enums.Action.addCategory:
+      case enums.Action.updateCategory:
         // Show Operation Dialog
         showOperationDialog(context);
         break;

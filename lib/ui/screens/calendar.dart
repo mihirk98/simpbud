@@ -23,8 +23,8 @@ import 'package:simplebudget/domain/models/sheet.dart';
 import 'package:simplebudget/domain/models/sheets.dart';
 
 // Widgets
-import 'package:simplebudget/ui/widgets/amount_text.dart';
-import 'package:simplebudget/ui/widgets/scaffold.dart';
+import 'package:simplebudget/ui/widgets/amount.dart';
+import 'package:simplebudget/ui/widgets/skeleton/scaffold.dart';
 
 final DataBloc _dataBloc = DataBloc();
 final PresentationBloc _presentationBloc = PresentationBloc();

@@ -13,7 +13,7 @@ import 'package:simplebudget/consts/styles.dart' as styles;
 import 'package:simplebudget/domain/models/sheet.dart';
 
 // Widgets
-import 'package:simplebudget/ui/widgets/scaffold.dart';
+import 'package:simplebudget/ui/widgets/skeleton/scaffold.dart';
 
 final DataBloc _dataBloc = DataBloc();
 final NavigationBloc _navigationBloc = NavigationBloc();

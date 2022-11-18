@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:simplebudget/consts/colors.dart';
 
 // Widgets
-import 'package:simplebudget/ui/widgets/body.dart';
-import 'package:simplebudget/ui/widgets/bottom_app_bar.dart';
+import 'package:simplebudget/ui/widgets/skeleton/body.dart';
+import 'package:simplebudget/ui/widgets/skeleton/bottom_app_bar.dart';
 
 class ScaffoldWidget extends StatelessWidget {
   const ScaffoldWidget({

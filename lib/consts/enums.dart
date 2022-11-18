@@ -1,4 +1,4 @@
-enum Navigation { home, calendar, add, categories }
+enum Navigation { home, calendar, add, categories, merge }
 
 enum Action {
   setActiveSheet,
@@ -6,7 +6,7 @@ enum Action {
   addIncomeTransaction,
   deleteExpenditureTransaction,
   deleteIncomeTransaction,
-  updateCategoryBudget,
+  updateCategory,
   addCategory,
   deleteCategory,
 }

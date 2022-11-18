@@ -9,6 +9,16 @@ class TransactionModel {
     required this.amount,
   });
 
+  TransactionModel copyWith({
+    required String desc,
+  }) {
+    return TransactionModel(
+      id: id,
+      desc: desc,
+      amount: amount,
+    );
+  }
+
   factory TransactionModel.fromJson(Map<String, dynamic> json) =>
       TransactionModel(
         id: json['id'],

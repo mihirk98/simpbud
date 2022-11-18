@@ -10,7 +10,7 @@ import 'package:simplebudget/consts/styles.dart' as styles;
 import 'package:simplebudget/ui/controllers/widgets/transaction.dart';
 
 // Models
-import 'package:simplebudget/ui/widgets/amount_text.dart';
+import 'package:simplebudget/ui/widgets/amount.dart';
 import 'package:simplebudget/domain/models/transcation.dart';
 
 // TODO Final variable defined outside of class?

@@ -5,9 +5,11 @@ import 'package:simplebudget/ui/utils.dart' as utils;
 
 // Blocs
 import 'package:simplebudget/blocs/data.dart';
+import 'package:simplebudget/blocs/navigation.dart';
 
 // Consts
 import 'package:simplebudget/consts/colors.dart' as colors;
+import 'package:simplebudget/consts/enums.dart' as enums;
 import 'package:simplebudget/consts/margins.dart' as margins;
 import 'package:simplebudget/consts/paddings.dart' as paddings;
 import 'package:simplebudget/consts/radius.dart' as radius;
@@ -22,12 +24,14 @@ import 'package:simplebudget/domain/models/category.dart';
 import 'package:simplebudget/domain/models/sheet.dart';
 
 // Widgets
-import 'package:simplebudget/ui/widgets/scaffold.dart';
+import 'package:simplebudget/ui/widgets/categories/category.dart';
+import 'package:simplebudget/ui/widgets/skeleton/scaffold.dart';
 
-// TODO Budget text field error on delete
+// TODO Tests?? Yes Yes
 // TODO Mosiac for wrap
 
 final DataBloc _dataBloc = DataBloc();
+final NavigationBloc _navigationBloc = NavigationBloc();
 final CategoriesScreenController _controller = CategoriesScreenController();
 
 final _addCategoryFormKey = GlobalKey<FormState>();
@@ -39,10 +43,15 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return buildScaffold(context);
+  }
+
+  ScaffoldWidget buildScaffold(BuildContext context) {
     return ScaffoldWidget(
         appBar: true,
         title: strings.categories,
         actions: [
+          buildMergeCategoriesButton(context),
           buildNewCategoryButton(context),
         ],
         back: true,
@@ -65,6 +74,18 @@ class CategoriesScreen extends StatelessWidget {
       },
       icon: const Icon(
         Icons.add,
+        color: colors.appBarIcon,
+        size: 24.0,
+      ),
+    );
+  }
+
+  Widget buildMergeCategoriesButton(BuildContext context) {
+    return IconButton(
+      onPressed: () =>
+          _navigationBloc.navigateTo(enums.Navigation.merge, context),
+      icon: const Icon(
+        Icons.merge,
         color: colors.appBarIcon,
         size: 24.0,
       ),
@@ -101,8 +122,8 @@ class CategoriesScreen extends StatelessWidget {
               children: _categories.map((category) {
                 return CategoriesCategoryWidget(
                   snapshot: snapshot,
-                  categories: _categories,
                   category: category,
+                  controller: _controller,
                 );
               }).toList(),
             ),
@@ -113,7 +134,8 @@ class CategoriesScreen extends StatelessWidget {
   Builder buildNewCategoryForm(AsyncSnapshot<SheetModel> snapshot) {
     return Builder(builder: (context) {
       return Container(
-        color: colors.tertiary,
+        decoration: utils.widgetBox(colors.widgetBackground, radius.widget),
+        margin: margins.content,
         padding: paddings.content,
         child: Form(
           key: _addCategoryFormKey,
@@ -178,131 +200,5 @@ class CategoriesScreen extends StatelessWidget {
         ),
       );
     });
-  }
-}
-
-class CategoriesCategoryWidget extends StatefulWidget {
-  const CategoriesCategoryWidget({
-    Key? key,
-    required AsyncSnapshot<SheetModel> snapshot,
-    required List<CategoryModel> categories,
-    required CategoryModel category,
-  })  : _snapshot = snapshot,
-        _categories = categories,
-        _category = category,
-        super(key: key);
-
-  final AsyncSnapshot<SheetModel> _snapshot;
-  final List<CategoryModel> _categories;
-  final CategoryModel _category;
-
-  @override
-  State<CategoriesCategoryWidget> createState() =>
-      _CategoriesCategoryWidgetState();
-}
-
-class _CategoriesCategoryWidgetState extends State<CategoriesCategoryWidget> {
-  final _editCategoryBudgetController = TextEditingController();
-  String? _errorMessage;
-
-  @override
-  void initState() {
-    _editCategoryBudgetController.text = widget._category.budget.toString();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print(widget._category.id);
-    return SizedBox(
-      width: MediaQuery.of(context).size.width / 2,
-      child: Container(
-        decoration: utils.widgetBox(colors.widgetBackground, radius.widget),
-        margin: margins.content,
-        padding: paddings.content,
-        child: Column(
-          children: [
-            Container(
-              alignment: Alignment.center,
-              padding: paddings.content,
-              child: Text(
-                widget._category.id,
-                style: styles.heading,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Padding(
-              padding: paddings.content,
-              child: Focus(
-                onFocusChange: (focus) {
-                  if (!focus) {
-                    if (_editCategoryBudgetController.text.isNotEmpty) {
-                      if (_editCategoryBudgetController.text !=
-                          widget._category.budget.toString()) {
-                        _controller.updateCategory(
-                          context,
-                          widget._category.id,
-                          int.parse(_editCategoryBudgetController.text),
-                        );
-                      }
-                    } else {
-                      _editCategoryBudgetController.text =
-                          widget._category.budget.toString();
-                    }
-                  }
-                },
-                child: TextField(
-                  controller: _editCategoryBudgetController,
-                  textAlign: TextAlign.center,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    signed: false,
-                    decimal: false,
-                  ),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    errorMaxLines: 5,
-                    errorText: _errorMessage,
-                    prefixText: strings.currency,
-                  ),
-                  style: styles.text,
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                onPressed: () => {
-                  if (widget._snapshot.data!.expenditure.transactions.any(
-                      (transaction) => transaction.desc == widget._category.id))
-                    {
-                      setState(() {
-                        _errorMessage = strings.deleteCategoryTransactions;
-                      }),
-                    }
-                  else if (widget._categories.length == 1)
-                    {
-                      setState(() {
-                        _errorMessage = strings.zeroCategories;
-                      }),
-                    }
-                  else
-                    {
-                      _controller.deleteCategory(
-                        context,
-                        widget._category,
-                      ),
-                    }
-                },
-                icon: const Icon(
-                  Icons.remove_circle_outline_sharp,
-                  color: colors.red,
-                  size: 20.0,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

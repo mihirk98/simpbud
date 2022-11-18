@@ -23,10 +23,11 @@ import 'package:simplebudget/domain/models/sheets.dart';
 import 'package:simplebudget/domain/models/transcation.dart';
 
 // Widgets
-import 'package:simplebudget/ui/widgets/amount_text.dart';
-import 'package:simplebudget/ui/widgets/loading_text.dart';
-import 'package:simplebudget/ui/widgets/no_transactions.dart';
-import 'package:simplebudget/ui/widgets/scaffold.dart';
+import 'package:simplebudget/ui/widgets/amount.dart';
+import 'package:simplebudget/ui/widgets/home/category.dart';
+import 'package:simplebudget/ui/widgets/loading.dart';
+import 'package:simplebudget/ui/widgets/empty_transactions.dart';
+import 'package:simplebudget/ui/widgets/skeleton/scaffold.dart';
 import 'package:simplebudget/ui/widgets/transaction.dart';
 
 final DataBloc _dataBloc = DataBloc();
@@ -37,6 +38,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return buildScaffold(context);
+  }
+
+  ScaffoldWidget buildScaffold(BuildContext context) {
     return ScaffoldWidget(
       appBar: true,
       title: DateFormat.MMMM().format(
@@ -82,6 +87,8 @@ class HomeBodyWidget extends StatefulWidget {
 class _HomeBodyWidgetState extends State<HomeBodyWidget> {
   bool _expenditureToggle = false;
   late SheetModel _activeSheet;
+  int _totalExpenditure = 0;
+  int _expectedExpenditure = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -110,17 +117,23 @@ class _HomeBodyWidgetState extends State<HomeBodyWidget> {
     );
   }
 
+  // ----------------------------------------------------------------------------------------------------
+  // Banner Widget
+  // ----------------------------------------------------------------------------------------------------
   Widget buildBannerWidget() {
     List<SheetsModel> _sheets = _dataBloc.getSheets;
-    List<CategoryModel> _categories = _dataBloc.getCategories;
     int _netTotal = 0;
     int _remainingExpenditure = 0;
+    _totalExpenditure = 0;
+    _expectedExpenditure = 0;
     for (SheetsModel sheets in _sheets) {
       for (SheetModel sheet in sheets.sheets) {
         _netTotal += sheet.income.total - sheet.expenditure.total;
       }
     }
-    for (CategoryModel category in _categories) {
+    for (CategoryModel category in _activeSheet.expenditure.categories) {
+      _totalExpenditure += category.expenditure;
+      _expectedExpenditure += category.budget;
       if (category.expenditure < category.budget) {
         _remainingExpenditure += category.budget - category.expenditure;
       }
@@ -204,91 +217,113 @@ class _HomeBodyWidgetState extends State<HomeBodyWidget> {
     );
   }
 
+  // ----------------------------------------------------------------------------------------------------
   // Expenditure Widget
+  // ----------------------------------------------------------------------------------------------------
   Widget buildExpenditureWidget() {
     return Container(
       decoration: utils.widgetBox(colors.widgetBackground, radius.widget),
       margin: margins.widget,
       padding: paddings.content,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () => {
-                      setState(() {
-                        _expenditureToggle = !_expenditureToggle;
-                      }),
-                    },
-                    icon: const Icon(
-                      Icons.swap_horiz,
-                      size: 24,
-                      color: colors.text,
-                    ),
-                  ),
-                  const Expanded(
-                    child: Text(
-                      strings.expenditure,
-                      style: styles.heading,
-                    ),
-                  ),
-                  _expenditureToggle == false
-                      ? IconButton(
-                          onPressed: () => _navigationBloc.navigateTo(
-                              enums.Navigation.categories, context),
-                          icon: const Icon(
-                            Icons.edit,
-                            size: 20,
-                            color: colors.text,
-                          ),
-                        )
-                      : Container(),
-                ],
-              ),
-              Column(
-                children: [
-                  buildTransactions(
-                      _activeSheet.expenditure.transactions.reversed.toList(),
-                      null),
-                  buildCategories(),
-                ],
-              ),
-            ],
-          ),
+          buildExpenditureWidgetHeader(),
+          buildExpenditureWidgetTransactions(),
         ],
       ),
     );
   }
 
+  Row buildExpenditureWidgetHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          onPressed: () => {
+            setState(() {
+              _expenditureToggle = !_expenditureToggle;
+            }),
+          },
+          icon: const Icon(
+            Icons.swap_horiz,
+            size: 24,
+            color: colors.text,
+          ),
+        ),
+        const Expanded(
+          child: Text(
+            strings.expenditure,
+            style: styles.heading,
+          ),
+        ),
+        _expenditureToggle == false
+            ? IconButton(
+                onPressed: () => _navigationBloc.navigateTo(
+                    enums.Navigation.categories, context),
+                icon: const Icon(
+                  Icons.edit,
+                  size: 20,
+                  color: colors.text,
+                ),
+              )
+            : Container(),
+      ],
+    );
+  }
+
+  Column buildExpenditureWidgetTransactions() {
+    return Column(
+      children: [
+        buildTransactions(
+            _activeSheet.expenditure.transactions.reversed.toList(), null),
+        buildCategories(),
+      ],
+    );
+  }
+
+  // ----------------------------------------------------------------------------------------------------
+  // Categories Widget
+  // ----------------------------------------------------------------------------------------------------
   Widget buildCategories() {
     List<CategoryModel> _categories = _activeSheet.expenditure.categories;
-    double percentageBarWidth = MediaQuery.of(context).size.width;
     return Visibility(
       maintainState: true,
       visible: !_expenditureToggle,
       child: Container(
         padding: paddings.widget,
-        child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: _categories.length,
-          itemBuilder: (BuildContext context, int index) {
-            int budget = _categories[index].budget;
-            int expenditure = _categories[index].expenditure;
-            double percentage =
-                budget != 0 && expenditure != 0 ? expenditure / budget : 0.0;
-            return HomeCategoryWidget(
-                category: _categories[index],
-                budget: budget,
-                percentageBarWidth: percentageBarWidth,
-                percentage: percentage,
-                expenditure: expenditure);
-          },
+        child: Column(
+          children: [
+            HomeCategoryWidget(
+              category: CategoryModel(
+                id: "Total / Expected",
+                budget: _expectedExpenditure,
+                expenditure: _totalExpenditure,
+              ),
+            ),
+            for (CategoryModel category in _categories)
+              HomeCategoryWidget(
+                category: category,
+              ),
+          ],
         ),
+        // child: ListView.builder(
+        //   physics: const NeverScrollableScrollPhysics(),
+        //   shrinkWrap: true,
+        //   itemCount: _categories.length,
+        //   itemBuilder: (BuildContext context, int index) {
+        //     int budget = _categories[index].budget;
+        //     int expenditure = _categories[index].expenditure;
+        //     double percentage =
+        //         budget != 0 && expenditure != 0 ? expenditure / budget : 0.0;
+        //     return HomeCategoryWidget(
+        //         category: _categories[index],
+        //         budget: budget,
+        //         percentageBarWidth: percentageBarWidth,
+        //         percentage: percentage,
+        //         expenditure: expenditure);
+        //   },
+        // ),
       ),
     );
   }
@@ -345,98 +380,6 @@ class _HomeBodyWidgetState extends State<HomeBodyWidget> {
                   );
                 },
               ),
-      ),
-    );
-  }
-}
-
-class HomeCategoryWidget extends StatelessWidget {
-  const HomeCategoryWidget({
-    Key? key,
-    required this.category,
-    required this.budget,
-    required this.percentageBarWidth,
-    required this.percentage,
-    required this.expenditure,
-  }) : super(key: key);
-
-  final CategoryModel category;
-  final int budget;
-  final double percentageBarWidth;
-  final double percentage;
-  final int expenditure;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: paddings.content,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                flex: 6,
-                child: budget != 0
-                    ? AmountTextWidget(
-                        text:
-                            expenditure.toString() + " / " + budget.toString(),
-                        style: styles.heading,
-                      )
-                    : AmountTextWidget(
-                        text: expenditure.toString(),
-                        style: styles.heading,
-                      ),
-              ),
-              Expanded(
-                flex: 4,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    category.id,
-                    style: styles.helper,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 4.0, 0, 4.0),
-            child: Wrap(
-              runSpacing: 8.0,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                budget != 0
-                    ? Container(
-                        height: 4.0,
-                        width: percentageBarWidth,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colors.tertiary,
-                          ),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        child: FractionallySizedBox(
-                          widthFactor: percentage > 1 ? 1.0 : percentage,
-                          child: Container(
-                              color: percentage < 1
-                                  ? colors.blue
-                                  : percentage == 1
-                                      ? colors.green
-                                      : colors.red),
-                        ),
-                      )
-                    : const SizedBox(),
-                budget != 0
-                    ? const SizedBox(
-                        width: 8.0,
-                      )
-                    : const SizedBox(),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

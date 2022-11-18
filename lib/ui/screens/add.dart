@@ -22,7 +22,7 @@ import 'package:simplebudget/ui/controllers/screens/add.dart';
 import 'package:simplebudget/domain/models/category.dart';
 
 // Widgets
-import 'package:simplebudget/ui/widgets/scaffold.dart';
+import 'package:simplebudget/ui/widgets/skeleton/scaffold.dart';
 
 final DataBloc _dataBloc = DataBloc();
 
