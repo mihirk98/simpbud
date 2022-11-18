@@ -1,3 +1,3 @@
-# simplebudget
+# simpbud
 
 a simple budgeting app
