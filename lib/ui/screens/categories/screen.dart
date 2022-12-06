@@ -17,14 +17,14 @@ import 'package:simplebudget/consts/strings.dart' as strings;
 import 'package:simplebudget/consts/styles.dart' as styles;
 
 // Controllers
-import 'package:simplebudget/ui/controllers/screens/categories.dart';
+import 'package:simplebudget/ui/screens/categories/controller.dart';
 
 // Models
 import 'package:simplebudget/domain/models/category.dart';
 import 'package:simplebudget/domain/models/sheet.dart';
 
 // Widgets
-import 'package:simplebudget/ui/widgets/categories/category.dart';
+import 'package:simplebudget/ui/screens/categories/widgets/category.dart';
 import 'package:simplebudget/ui/widgets/skeleton/scaffold.dart';
 
 // TODO Tests?? Yes Yes
@@ -115,7 +115,7 @@ class CategoriesScreen extends StatelessWidget {
         snapshot.data!.expenditure.categories;
     return Expanded(
       child: Container(
-          margin: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
+          margin: margins.widget.copyWith(left: 0, right: 0),
           child: SingleChildScrollView(
             child: Wrap(
               direction: Axis.horizontal,

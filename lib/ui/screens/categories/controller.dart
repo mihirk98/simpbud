@@ -1,4 +1,4 @@
-import 'package:simplebudget/ui/controllers/dialogs/category_edit_dialog.dart';
+import 'package:simplebudget/ui/dialogs/category_edit/controller.dart';
 import 'package:simplebudget/ui/utils.dart';
 
 // Blocs
@@ -17,7 +17,8 @@ import 'package:simplebudget/domain/models/category.dart';
 final PresentationBloc _presentationBloc = PresentationBloc();
 
 class CategoriesScreenController {
-  updateCategory(BuildContext context, String category, int budget) async {
+  updateCategory(
+      BuildContext context, CategoryModel category, int budget) async {
     await showEditCategoryDialog(
       context,
       category,
@@ -58,7 +59,7 @@ class CategoriesScreenController {
           ActionModel(
             action: enums.Action.addCategory,
             props: {
-              "category": idController.text,
+              "id": idController.text,
               "budget": int.parse(budgetController.text),
             },
           ),

@@ -7,7 +7,7 @@ import 'package:simplebudget/consts/paddings.dart' as paddings;
 import 'package:simplebudget/consts/styles.dart' as styles;
 
 // Controllers
-import 'package:simplebudget/ui/controllers/widgets/transaction.dart';
+import 'package:simplebudget/ui/widgets/transaction/controller.dart';
 
 // Models
 import 'package:simplebudget/ui/widgets/amount.dart';
@@ -40,7 +40,7 @@ class TransactionWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${transaction.desc},",
+                  transaction.desc,
                   style: styles.helper,
                 ),
                 Text(

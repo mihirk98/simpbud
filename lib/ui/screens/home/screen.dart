@@ -24,11 +24,11 @@ import 'package:simplebudget/domain/models/transcation.dart';
 
 // Widgets
 import 'package:simplebudget/ui/widgets/amount.dart';
-import 'package:simplebudget/ui/widgets/home/category.dart';
+import 'package:simplebudget/ui/screens/home/widget/category.dart';
 import 'package:simplebudget/ui/widgets/loading.dart';
 import 'package:simplebudget/ui/widgets/empty_transactions.dart';
 import 'package:simplebudget/ui/widgets/skeleton/scaffold.dart';
-import 'package:simplebudget/ui/widgets/transaction.dart';
+import 'package:simplebudget/ui/widgets/transaction/widget.dart';
 
 final DataBloc _dataBloc = DataBloc();
 final NavigationBloc _navigationBloc = NavigationBloc();
@@ -307,23 +307,6 @@ class _HomeBodyWidgetState extends State<HomeBodyWidget> {
               ),
           ],
         ),
-        // child: ListView.builder(
-        //   physics: const NeverScrollableScrollPhysics(),
-        //   shrinkWrap: true,
-        //   itemCount: _categories.length,
-        //   itemBuilder: (BuildContext context, int index) {
-        //     int budget = _categories[index].budget;
-        //     int expenditure = _categories[index].expenditure;
-        //     double percentage =
-        //         budget != 0 && expenditure != 0 ? expenditure / budget : 0.0;
-        //     return HomeCategoryWidget(
-        //         category: _categories[index],
-        //         budget: budget,
-        //         percentageBarWidth: percentageBarWidth,
-        //         percentage: percentage,
-        //         expenditure: expenditure);
-        //   },
-        // ),
       ),
     );
   }

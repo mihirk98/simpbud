@@ -13,15 +13,19 @@ import 'package:simplebudget/consts/radius.dart' as radius;
 import 'package:simplebudget/consts/strings.dart' as strings;
 import 'package:simplebudget/consts/styles.dart' as styles;
 
+// Models
+import 'package:simplebudget/domain/models/category.dart';
+
 final DataBloc _dataBloc = DataBloc();
 final _editCategoryFormKey = GlobalKey<FormState>();
 final TextEditingController _idController = TextEditingController();
 final TextEditingController _budgetController = TextEditingController();
 
 class EditCategoryDialog extends StatelessWidget {
-  final String id;
+  final CategoryModel category;
   final int budget;
-  const EditCategoryDialog({required this.id, required this.budget, Key? key})
+  const EditCategoryDialog(
+      {required this.category, required this.budget, Key? key})
       : super(key: key);
 
   @override
@@ -51,11 +55,11 @@ class EditCategoryDialog extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         left: 4.0, right: 4.0, bottom: 4.0),
                     child: TextFormField(
-                      controller: _idController..text = id,
+                      controller: _idController..text = category.id,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return strings.validCategory;
-                        } else if (value == id) {
+                        } else if (value == category.id) {
                           return null;
                         } else if (_dataBloc.getCategories
                             .any((category) => category.id == value)) {

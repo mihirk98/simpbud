@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 // Consts
 import 'package:simplebudget/consts/enums.dart' as enums;
-import 'package:simplebudget/ui/screens/add.dart';
+import 'package:simplebudget/ui/screens/add/screen.dart';
 
 // Screens
 import 'package:simplebudget/ui/screens/calendar.dart';
-import 'package:simplebudget/ui/screens/categories.dart';
-import 'package:simplebudget/ui/screens/home.dart';
+import 'package:simplebudget/ui/screens/categories/screen.dart';
+import 'package:simplebudget/ui/screens/home/screen.dart';
 import 'package:simplebudget/ui/screens/merge.dart';
 
 class NavigationBloc {

@@ -11,7 +11,7 @@ import 'package:simplebudget/consts/strings.dart' as strings;
 import 'package:simplebudget/consts/styles.dart' as styles;
 
 // Controllers
-import 'package:simplebudget/ui/controllers/screens/categories.dart';
+import 'package:simplebudget/ui/screens/categories/controller.dart';
 
 // Models
 import 'package:simplebudget/domain/models/category.dart';
@@ -86,18 +86,19 @@ class _CategoriesCategoryWidgetState extends State<CategoriesCategoryWidget> {
               children: [
                 IconButton(
                   onPressed: () => {
-                    if (widget._snapshot.data!.expenditure.transactions.any(
-                        (transaction) =>
-                            transaction.desc == widget._category.id))
-                      {
-                        setState(() {
-                          _errorMessage = strings.deleteCategoryTransactions;
-                        }),
-                      }
-                    else if (_categoriesLength == 1)
+                    if (_categoriesLength == 1)
                       {
                         setState(() {
                           _errorMessage = strings.zeroCategories;
+                        }),
+                      }
+                    else if (widget._snapshot.data!.expenditure.transactions
+                        .any((transaction) =>
+                            transaction.desc == widget._category.id))
+                      {
+                        setState(() {
+                          _errorMessage =
+                              strings.mergeOrDeleteCategoryTransactions;
                         }),
                       }
                     else
@@ -116,7 +117,7 @@ class _CategoriesCategoryWidgetState extends State<CategoriesCategoryWidget> {
                 ),
                 IconButton(
                   onPressed: () => widget._controller.updateCategory(
-                      context, widget._category.id, widget._category.budget),
+                      context, widget._category, widget._category.budget),
                   icon: const Icon(
                     Icons.edit,
                     color: colors.text,

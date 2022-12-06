@@ -73,6 +73,7 @@ class SimpleBudgetApp extends StatelessWidget {
           primary: colors.text,
         ),
       ),
+      canvasColor: colors.tertiary,
       colorScheme:
           ColorScheme.fromSwatch().copyWith(secondary: colors.secondary),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Dialogs
-import 'package:simplebudget/ui/dialogs/operation_dialog.dart';
+import 'package:simplebudget/ui/dialogs/operation/dialog.dart';
 
 void showOperationDialog(BuildContext context) {
   showDialog(

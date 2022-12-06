@@ -44,8 +44,8 @@ class AppRepository {
   Future<bool> operation(Function function, Map<String, dynamic> props) async {
     try {
       // Create Operation
-      final Operation _operation = Operation(_fileHelper, _sheets, _year,
-          _month, activeSheetValueNotifier.value!, props);
+      final Operation _operation =
+          Operation(_fileHelper, _sheets, _year, _month, props);
       // Call function
       function(_operation);
       // Update sheets
@@ -68,8 +68,8 @@ class AppRepository {
     operation.updateExpenditureTotal(false);
     // Add expenditure transaction
     operation.addExpenditureTransaction();
-    // Update category expenditure field value of active sheet
-    operation.updateCategoryExpenditure(false);
+    // Update category expenditure field value of active sheet by single transaction
+    operation.updateCategoryExpenditureTransaction(false);
   }
 
   addIncomeTransaction(Operation operation) async {
@@ -102,10 +102,23 @@ class AppRepository {
   }
 
   updateCategory(Operation operation) {
-    // Update category
-    operation.updateCategory();
     // Update category transactions
     operation.updateCategoryTransactions();
+    // Update category
+    operation.updateCategory();
+    // Update Categories List
+    operation.updateCategoriesList();
+  }
+
+  mergeCategories(Operation operation) {
+    // Update category expenditure field value of active sheet by total
+    operation.updateCategoryExpenditureTotal();
+    // Update category transactions
+    operation.updateCategoryTransactions();
+    // Delete Category
+    operation.deleteCategory();
+    // Update Categories List
+    operation.updateCategoriesList();
   }
 
   // Delete
@@ -114,8 +127,8 @@ class AppRepository {
     operation.updateExpenditureTotal(true);
     // Remove expenditure transaction
     operation.deleteExpenditureTransaction();
-    // Update category expenditure field value of active sheet
-    operation.updateCategoryExpenditure(true);
+    // Update category expenditure field value of active sheet by single transaction
+    operation.updateCategoryExpenditureTransaction(true);
   }
 
   deleteIncomeTransaction(Operation operation) {

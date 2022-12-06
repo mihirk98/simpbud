@@ -100,6 +100,13 @@ class DataBloc {
               action.props,
             )
             .then((success) => success);
+      case enums.Action.mergeCategories:
+        return await _appRepository
+            .operation(
+              _appRepository.mergeCategories,
+              action.props,
+            )
+            .then((success) => success);
     }
   }
 

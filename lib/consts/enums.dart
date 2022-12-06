@@ -9,4 +9,5 @@ enum Action {
   updateCategory,
   addCategory,
   deleteCategory,
+  mergeCategories,
 }

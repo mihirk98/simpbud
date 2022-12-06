@@ -7,8 +7,8 @@ import 'package:simplebudget/blocs/data.dart';
 import 'package:simplebudget/consts/enums.dart' as enums;
 
 // Controllers
-import 'package:simplebudget/ui/controllers/dialogs/confirmation_dialog.dart';
-import 'package:simplebudget/ui/controllers/dialogs/operation_dialog.dart';
+import 'package:simplebudget/ui/dialogs/confirmation/controller.dart';
+import 'package:simplebudget/ui/dialogs/operation/controller.dart';
 
 // Models
 import 'package:simplebudget/domain/models/action.dart';
@@ -38,6 +38,7 @@ class PresentationBloc {
       case enums.Action.deleteExpenditureTransaction:
       case enums.Action.deleteIncomeTransaction:
       case enums.Action.deleteCategory:
+      case enums.Action.mergeCategories:
         _decision =
             await showConfirmationDialog(context).then((decision) => decision);
         if (_decision) showOperationDialog(context);

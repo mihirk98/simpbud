@@ -45,7 +45,7 @@ class HomeCategoryWidget extends StatelessWidget {
                 child: Text(
                   (remaining.isNegative && budget != 0
                           ? "+"
-                          : budget == 0
+                          : budget == 0 && remaining != 0
                               ? "-"
                               : "") +
                       (remaining * -1).toString(),

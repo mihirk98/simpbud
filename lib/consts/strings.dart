@@ -1,4 +1,4 @@
-const String app = "SimpBud";
+const String app = "simpbud";
 const String calendar = "Calendar";
 const String loading = "Loading ...";
 const String add = "Add";
@@ -18,7 +18,8 @@ const String categoryExists = "Category already exists.";
 const String validCategory = "Please enter valid category.";
 const String validBudget = "Please enter valid budget.";
 const String noBudget = "Enter zero for no budget.";
-const String deleteCategoryTransactions = "Delete category transactions first.";
+const String mergeOrDeleteCategoryTransactions =
+    "Merge or delete category transactions first.";
 const String zeroCategories = "You need at least one category.";
 const String confirmation = "Are you sure?";
 const String yes = "Yes";

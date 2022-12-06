@@ -4,7 +4,6 @@ import 'package:simplebudget/domain/file_helper.dart';
 
 // Models
 import 'package:simplebudget/domain/models/category.dart';
-import 'package:simplebudget/domain/models/sheet.dart';
 import 'package:simplebudget/domain/models/sheets.dart';
 
 class Operation {
@@ -12,12 +11,11 @@ class Operation {
   final List<SheetsModel> _sheets;
   final int _year;
   final int _month;
-  final SheetModel _activeSheet;
   final Map<String, dynamic> _props;
   late final SheetsModel _updatedSheetsModel;
 
-  Operation(this._fileHelper, this._sheets, this._year, this._month,
-      this._activeSheet, this._props) {
+  Operation(
+      this._fileHelper, this._sheets, this._year, this._month, this._props) {
     _updatedSheetsModel =
         _sheets.firstWhere((sheet) => sheet.year == _year).copyWith();
   }
@@ -28,9 +26,9 @@ class Operation {
     );
   }
 
-  // Operations
+  ////// Operations
+  //// Create
   // Month value -1 because Month ranges from 1 .. 12 hence -1 for arrays which range from 0 .. 11
-  // Create
   addExpenditureTransaction() =>
       _updatedSheetsModel.sheets[_month - 1].expenditure.transactions
           .add(_props["transaction"]);
@@ -42,17 +40,17 @@ class Operation {
   addCategory() {
     _updatedSheetsModel.sheets[_month - 1].expenditure.categories.add(
       CategoryModel(
-        id: _props["category"],
+        id: _props["id"],
         budget: _props["budget"],
         expenditure: 0,
       ),
     );
   }
 
-  // Read
+  //// Read
   List<SheetsModel> getSheets() => _sheets;
 
-  // Update
+  //// Update
   // Update active sheet in sheets list
   updateSheets() =>
       _sheets[_sheets.indexWhere((sheet) => sheet.year == _year)] =
@@ -62,31 +60,29 @@ class Operation {
   updateExpenditureTotal(bool negative) =>
       _updatedSheetsModel.sheets[_month - 1] =
           _updatedSheetsModel.sheets[_month - 1].copyWith(
-              expenditure: _activeSheet.expenditure.copyWith(
-                  total: negative == true
-                      ? -_props["transaction"].amount
-                      : _props["transaction"].amount));
+              expenditure: _updatedSheetsModel.sheets[_month - 1].expenditure
+                  .copyWith(
+                      total: negative == true
+                          ? -_props["transaction"].amount
+                          : _props["transaction"].amount));
 
   // Update category expenditure field value of active sheet (transaction amount is added to previous expenditure field value, check CategoryModel)
-  updateCategoryExpenditure(bool negative) {
+  updateCategoryExpenditureTransaction(bool negative) {
     int _categoryIndex = _updatedSheetsModel
         .sheets[_month - 1].expenditure.categories
         .indexWhere((category) => category.id == _props["transaction"].desc);
-    _updatedSheetsModel
-            .sheets[_month - 1].expenditure.categories[_categoryIndex] =
-        _updatedSheetsModel
-            .sheets[_month - 1].expenditure.categories[_categoryIndex]
-            .copyWith(
-                expenditure: negative == true
-                    ? -_props["transaction"].amount
-                    : _props["transaction"].amount);
+    updateCategoryExpenditure(
+        _categoryIndex,
+        negative == true
+            ? -_props["transaction"].amount
+            : _props["transaction"].amount);
   }
 
   // Update category
   updateCategory() {
     int _categoryIndex = _updatedSheetsModel
         .sheets[_month - 1].expenditure.categories
-        .indexWhere((category) => category.id == _props["category"]);
+        .indexWhere((category) => category.id == _props["category"].id);
     _updatedSheetsModel
             .sheets[_month - 1].expenditure.categories[_categoryIndex] =
         _updatedSheetsModel
@@ -99,7 +95,7 @@ class Operation {
     List<TransactionModel> _updatedTransations = [];
     for (TransactionModel transaction
         in _updatedSheetsModel.sheets[_month - 1].expenditure.transactions) {
-      if (transaction.desc == _props["category"]) {
+      if (transaction.desc == _props["category"].id) {
         _updatedTransations.add(
           transaction.copyWith(
             desc: _props["id"],
@@ -110,17 +106,40 @@ class Operation {
       }
       _updatedSheetsModel.sheets[_month - 1] =
           _updatedSheetsModel.sheets[_month - 1].copyWith(
-        expenditure: _activeSheet.expenditure.copyWith(
+        expenditure:
+            _updatedSheetsModel.sheets[_month - 1].expenditure.copyWith(
           transactions: _updatedTransations,
         ),
       );
     }
   }
 
+  // Update category expenditure field value of active sheet by total
+  updateCategoryExpenditureTotal() {
+    int totalCategoryExpenditure = 0;
+    for (TransactionModel transaction
+        in _updatedSheetsModel.sheets[_month - 1].expenditure.transactions) {
+      if (transaction.desc == _props["category"].id) {
+        totalCategoryExpenditure += transaction.amount;
+      }
+    }
+    int _categoryIndex = _updatedSheetsModel
+        .sheets[_month - 1].expenditure.categories
+        .indexWhere((category) => category.id == _props["id"]);
+    updateCategoryExpenditure(_categoryIndex, totalCategoryExpenditure);
+  }
+
+  // Update category expenditure
+  updateCategoryExpenditure(categoryIndex, amount) => _updatedSheetsModel
+          .sheets[_month - 1].expenditure.categories[categoryIndex] =
+      _updatedSheetsModel
+          .sheets[_month - 1].expenditure.categories[categoryIndex]
+          .copyWith(expenditure: amount);
+
   // Update income total field value of active sheet (transaction amount is added to previous total, check IncomeModel)
   updateIncomeTotal(bool negative) => _updatedSheetsModel.sheets[_month - 1] =
       _updatedSheetsModel.sheets[_month - 1].copyWith(
-          income: _activeSheet.income.copyWith(
+          income: _updatedSheetsModel.sheets[_month - 1].income.copyWith(
               total: negative == true
                   ? -_props["transaction"].amount
                   : _props["transaction"].amount));
@@ -128,13 +147,14 @@ class Operation {
   // Update active sheet with updated category list
   updateCategoriesList() => _updatedSheetsModel.sheets[_month - 1] =
           _updatedSheetsModel.sheets[_month - 1].copyWith(
-        expenditure: _activeSheet.expenditure.copyWith(
+        expenditure:
+            _updatedSheetsModel.sheets[_month - 1].expenditure.copyWith(
           categories:
               _updatedSheetsModel.sheets[_month - 1].expenditure.categories,
         ),
       );
 
-  // Delete
+  //// Delete
   deleteIncomeTransaction() =>
       _updatedSheetsModel.sheets[_month - 1].income.transactions
           .remove(_props["transaction"]);

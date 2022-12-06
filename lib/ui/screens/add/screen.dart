@@ -16,7 +16,7 @@ import 'package:simplebudget/consts/strings.dart' as strings;
 import 'package:simplebudget/consts/styles.dart' as styles;
 
 // Controllers
-import 'package:simplebudget/ui/controllers/screens/add.dart';
+import 'package:simplebudget/ui/screens/add/controller.dart';
 
 // Models
 import 'package:simplebudget/domain/models/category.dart';
